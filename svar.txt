@@ -1,0 +1,4 @@
+1. Nej. Jag vill modifiera värdet på sigma.
+2. Programmet kraschar på rad 11 p. g. a. segmentation fault. (Programmet får inte korrekt antal parametrar).
+3. Vi har aldrig sagt åt programmet att strängen x har tagit slut med \0-tecknet. Eftersom x och y ligger intill varandra i minnet är det bara naturligt att x börjat skiriva i y.
+4. De kör lika länge. Jag misstänker att det har att göra med att vi dereferenserar pekaren och plockar ut dess värde. Annars känns det som att pekaren borde köra länre.
