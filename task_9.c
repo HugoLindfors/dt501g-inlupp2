@@ -3,10 +3,10 @@
 #include <string.h>
 
 // copy file element
-void cfe(int c, FILE *fp, char *tgt)
+void cfe(int c, FILE *fp, char *te)
 {
         // clang-format off
-        for ((void)c; c > 0; c--) fscanf(fp, "%3s", tgt);
+        for ((void)c; c > 0; c--) fscanf(fp, "%3s", te);
         //clang-format on
 }
 
