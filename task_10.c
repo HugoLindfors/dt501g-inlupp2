@@ -81,8 +81,6 @@ int main(const int argc, const char **argv)
 
         fprintf(tfp, "%s\n%s %s\n%s\n", tf[0], tf[1], tf[2], tf[3]);
 
-        printf("%dx%d\n", w, h);
-
         // clang-format off
         for (int i = 0; i < h; i++) {
                 for (int j = 0; j < w; j++) {
