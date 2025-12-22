@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX 1000000
-
 void thresh(int *x, int t, int m, int M)
 {
         // clang-format off

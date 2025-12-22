@@ -2,31 +2,59 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX 1000000
-
-void thresh(int *x, int t, int m, int M)
+void avg(int *x, int j, int w, int i, int h, char **f)
 {
+        int n = 0;
+        int d = 0;
+
         // clang-format off
-        if (*x >= t) *x = M;
-        else *x = m;
-        // clang-format on
+        if (j > 0) {
+                char *ys = f[i * w + (j - 1) + 4];
+                n += atoi(ys);
+                d++;
+        } if (i > 0) {
+                char *ys = f[(i - 1) * w + j + 4];
+                n += atoi(ys);
+                d++;
+        } if (j < w - 1) {
+                char *ys = f[i * w + (j + 1) + 4];
+                n += atoi(ys);
+                d++;
+        } if (i < h - 1)
+        {
+                char *ys = f[(i + 1) * w + j + 4];
+                n += atoi(ys);
+                d++;
+        } if (d > 0)
+        {
+                *x = n / d;
+        } else {
+                *x = 0;
+        } // clang-format off
 }
 
-void ta(int sz, char **f, int t, int m, int M)
+void aa(int sz, int w, int h, char **f)
 {
         // clang-format off
-        for (int i = 4; i < sz + 4; i++) {
+        for (int i = 0; i < h; i++) {
+                for (int j = 0; j < w; j++) {
+                        char *xs = f[i * w + j + 4];
+                        int x = atoi(xs);
+                        avg(&x, j, w, i, h, f);
+                        sprintf(f[i * w + j + 4], "%d", x);
+                }
+        } // clang-format on
+
+        for (int i = 4; i < sz + 4; i++)
+        {
                 char *xs = f[i];
-                int x = atoi(xs);
-                thresh(&x, t, m, M);
-                sprintf(f[i], "%d", x);
+
         } // clang-format on
 }
 
 void cfe(FILE *sfp, char *te)
 {
         fscanf(sfp, " %3s", te);
-        printf("cfe: %s\n", te);
 }
 
 void cf(int sz, FILE *sfp, char **tf)
@@ -55,19 +83,13 @@ int main(const int argc, const char **argv)
         char *tmp0 = malloc(sizeof(char[4]));
         cfe(sfp, tmp0);
 
-        printf("tmp0: %s\n", tmp0);
-
         char *tmp1 = malloc(sizeof(char[4]));
         cfe(sfp, tmp1);
         int w = atoi(tmp1);
 
-        printf("tmp1: %s\n", tmp1);
-
         char *tmp2 = malloc(sizeof(char[4]));
         cfe(sfp, tmp2);
         int h = atoi(tmp2);
-
-        printf("tmp2: %s\n", tmp2);
 
         int sz = w * h;
 
@@ -81,14 +103,13 @@ int main(const int argc, const char **argv)
         cfe(sfp, tf[3]);
 
         cf(sz, sfp, tf);
-        ta(sz, tf, 120, 0, 255);
+
+        aa(sz, w, h, tf);
 
         fclose(sfp);
         FILE *tfp = fopen(tgt, "w");
 
         fprintf(tfp, "%s\n%s %s\n%s\n", tf[0], tf[1], tf[2], tf[3]);
-
-        printf("%dx%d\n", w, h);
 
         // clang-format off
         for (int i = 0; i < h; i++) {
