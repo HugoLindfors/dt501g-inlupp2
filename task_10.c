@@ -26,7 +26,6 @@ void ta(int sz, char **f, int t, int m, int M)
 void cfe(FILE *sfp, char *te)
 {
         fscanf(sfp, " %3s", te);
-        printf("cfe: %s\n", te);
 }
 
 void cf(int sz, FILE *sfp, char **tf)
@@ -55,19 +54,13 @@ int main(const int argc, const char **argv)
         char *tmp0 = malloc(sizeof(char[4]));
         cfe(sfp, tmp0);
 
-        printf("tmp0: %s\n", tmp0);
-
         char *tmp1 = malloc(sizeof(char[4]));
         cfe(sfp, tmp1);
         int w = atoi(tmp1);
 
-        printf("tmp1: %s\n", tmp1);
-
         char *tmp2 = malloc(sizeof(char[4]));
         cfe(sfp, tmp2);
         int h = atoi(tmp2);
-
-        printf("tmp2: %s\n", tmp2);
 
         int sz = w * h;
 
