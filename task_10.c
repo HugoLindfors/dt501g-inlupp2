@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX 1024
+#define MAX 1000000
 
 void thresh(int *x, int t, int m, int M)
 {
@@ -15,7 +15,7 @@ void thresh(int *x, int t, int m, int M)
 void ta(int sz, char **f, int t, int m, int M)
 {
         // clang-format off
-        for (int i = 3; i < sz; i++) {
+        for (int i = 4; i < sz + 4; i++) {
                 char *xs = f[i];
                 int x = atoi(xs);
                 thresh(&x, t, m, M);
@@ -23,75 +23,80 @@ void ta(int sz, char **f, int t, int m, int M)
         } // clang-format on
 }
 
-void cfe(int c, FILE *sfp, char *te)
+void cfe(FILE *sfp, char *te)
 {
-        // clang-format off
-        for ((void)c; c > 0; c--) fscanf(sfp, "%3s", te);
-        //clang-format on
+        fscanf(sfp, " %3s", te);
+        printf("cfe: %s\n", te);
 }
 
 void cf(int sz, FILE *sfp, char **tf)
 {
         // clang-format off
-        for (int i = 0; i < sz; i++) {
+        for (int i = 4; i < sz + 4; i++) {
                 tf[i] = malloc(sizeof(char[4]));
-                cfe(1, sfp, tf[i]);
+                cfe(sfp, tf[i]);
         } // clang-format on
-        fclose(sfp);
 }
 
 int main(const int argc, const char **argv)
 {
         // clang-format off
-        if (argc < 2) {
-                printf("missing file arguments\n");
-                return 1;
-        } else if (argc == 2) {
-                printf("too few file arguments\n");
-                return 1;
-        } else if (argc > 3) {
-                printf("too many arguments\n");
-                return 1;
-        } // clang-format on
+        if (argc < 3) return 1;
+        // clang-format on
 
         const char *tgt = argv[1];
         const char *src = argv[2];
 
         FILE *sfp = fopen(src, "r");
-
         // clang-format off
-        if (!sfp) {
-                printf("invalid file argument\n");
-                return 1;
-        } // clang-format on
+        if (!sfp) return 1;
+        // clang-format on
 
-        char **tf = malloc(MAX * sizeof(char[4]));
+        char *tmp0 = malloc(sizeof(char[4]));
+        cfe(sfp, tmp0);
 
-        cfe(1, sfp, tf[0]);
+        printf("tmp0: %s\n", tmp0);
 
-        cfe(1, sfp, tf[1]);
-        int w = atoi(tf[1]);
+        char *tmp1 = malloc(sizeof(char[4]));
+        cfe(sfp, tmp1);
+        int w = atoi(tmp1);
 
-        cfe(1, sfp, tf[2]);
-        int h = atoi(tf[2]);
+        printf("tmp1: %s\n", tmp1);
+
+        char *tmp2 = malloc(sizeof(char[4]));
+        cfe(sfp, tmp2);
+        int h = atoi(tmp2);
+
+        printf("tmp2: %s\n", tmp2);
 
         int sz = w * h;
+
+        char **tf = malloc((sz + 4) * sizeof(char *));
+
+        tf[0] = tmp0;
+        tf[1] = tmp1;
+        tf[2] = tmp2;
+
+        tf[3] = malloc(sizeof(char[4]));
+        cfe(sfp, tf[3]);
 
         cf(sz, sfp, tf);
         ta(sz, tf, 120, 0, 255);
 
+        fclose(sfp);
         FILE *tfp = fopen(tgt, "w");
 
-        fprintf(tfp, "%s\n%s %s", tf[0], tf[1], tf[2]);
+        fprintf(tfp, "%s\n%s %s\n%s\n", tf[0], tf[1], tf[2], tf[3]);
+
+        printf("%dx%d\n", w, h);
 
         // clang-format off
         for (int i = 0; i < h; i++) {
                 for (int j = 0; j < w; j++) {
-                        if (!(i == (h - 1) && j > (w - 4))) fprintf(tfp, "%s ", tf[i * w + j + 3]);
+                        fprintf(tfp, "%s ", tf[i * w + j + 4]);
                 } fprintf(tfp, "\n");
         } // clang-format on
 
         fclose(tfp);
-
         return 0;
 }
