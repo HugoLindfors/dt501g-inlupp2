@@ -2,35 +2,40 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MX 1024
+#define MAX 1024
 
-// thresh (x, threshhold, min, max)
-int thresh(int x, int t, int mn, int mx)
+void thresh(int *x, int t, int m, int M)
 {
         // clang-format off
-        if (x >= t) return mx;
-        else return mn;
+        if (*x >= t) *x = M;
+        else *x = m;
         // clang-format on
 }
 
-// copy file element (c, source file pointer, target element, mode [(n)ormal, (t)reshhold])
-void cfe(int c, FILE *sfp, char *te, char m)
+void ta(int sz, char **f, int t, int m, int M)
 {
         // clang-format off
-        if (m == 't') for ((void)c; c > 0; c--) {
-                fscanf(sfp, "%3s", te);
-                sprintf(te, "%3d", thresh(atoi(te), 120, 0, 255));
-        } else for ((void)c; c > 0; c--) fscanf(sfp, "%3s", te);
+        for (int i = 3; i < sz; i++) {
+                char *xs = f[i];
+                int x = atoi(xs);
+                thresh(&x, t, m, M);
+                sprintf(f[i], "%d", x);
+        } // clang-format on
+}
+
+void cfe(int c, FILE *sfp, char *te)
+{
+        // clang-format off
+        for ((void)c; c > 0; c--) fscanf(sfp, "%3s", te);
         //clang-format on
 }
 
-// copy file (size, source file pointer, target file, mode [(n)ormal, (t)hreshold])
-void cf(int sz, FILE *sfp, char **tf, char m)
+void cf(int sz, FILE *sfp, char **tf)
 {
         // clang-format off
         for (int i = 0; i < sz; i++) {
                 tf[i] = malloc(sizeof(char[4]));
-                cfe(1, sfp, tf[i], m);
+                cfe(1, sfp, tf[i]);
         } // clang-format on
         fclose(sfp);
 }
@@ -60,19 +65,20 @@ int main(const int argc, const char **argv)
                 return 1;
         } // clang-format on
 
-        char **tf = malloc(MX * sizeof(char[4]));
+        char **tf = malloc(MAX * sizeof(char[4]));
 
-        cfe(1, sfp, tf[0], 'n');
+        cfe(1, sfp, tf[0]);
 
-        cfe(1, sfp, tf[1], 'n');
+        cfe(1, sfp, tf[1]);
         int w = atoi(tf[1]);
 
-        cfe(1, sfp, tf[2], 'n');
+        cfe(1, sfp, tf[2]);
         int h = atoi(tf[2]);
 
         int sz = w * h;
 
-        cf(sz, sfp, tf, 't');
+        cf(sz, sfp, tf);
+        ta(sz, tf, 120, 0, 255);
 
         FILE *tfp = fopen(tgt, "w");
 
@@ -80,9 +86,8 @@ int main(const int argc, const char **argv)
 
         // clang-format off
         for (int i = 0; i < h; i++) {
-                printf("ss");
                 for (int j = 0; j < w; j++) {
-                        if (!(i == h - 1 && j > w - 4)) fprintf(tfp, "%s ", tf[i * w + j + 3]);
+                        if (!(i == (h - 1) && j > (w - 4))) fprintf(tfp, "%s ", tf[i * w + j + 3]);
                 } fprintf(tfp, "\n");
         } // clang-format on
 
